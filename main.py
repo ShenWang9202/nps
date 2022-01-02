@@ -20,13 +20,13 @@ import sys
 import mininet_script_generator
 import mininet_script_operator
 import threading
-from SocketServer import ThreadingUDPServer, DatagramRequestHandler
+from socketserver import ThreadingUDPServer, DatagramRequestHandler
 import networkx as nx
 
 
 
 # SOME IMPORTANT CONSTANTS =)
-MININETCE_HOME_FOLDER = '/Users/vitalyantonenko/PycharmProjects/MininetClusterManagerRC'
+MININETCE_HOME_FOLDER = '/Users/shenwang/PycharmProjects/nps-shen/nps'
 
 LOG_FILEPATH      = MININETCE_HOME_FOLDER + '/logs/MininetCluster.log'
 ROOT_LOG_FILEPATH = MININETCE_HOME_FOLDER + '/logs/MininetCluster_root.log'
@@ -187,12 +187,15 @@ def send_turn_on_script_to_cluster_node(node_IP, script_filename):
 def open_ssh_to_nodes():
     '''Open SSH sessions to each node in cluster.
     '''
+    print(node_map.keys())
     for node_IP in node_map.keys():
+        print(node_IP)
         ssh_map[node_IP] = SSHClient()
         ssh_map[node_IP].set_missing_host_key_policy(AutoAddPolicy())
+        print(node_map[node_IP])
         ssh_map[node_IP].connect(hostname=node_IP, username=node_map[node_IP], password=node_map[node_IP])
         ssh_chan_map[node_IP] = ssh_map[node_IP].invoke_shell()
-        logger_MininetCE.info('opening SSH session to ' + str(node_IP))
+        print('opening SSH session to ' + str(node_IP))
 
 
 def close_ssh_to_nodes():
@@ -414,7 +417,7 @@ class CLI_director(cmd.Cmd):
     ## Command definitions ##
     def do_hist(self, args):
         """Print a list of commands that have been entered"""
-        print self._hist
+        print(self._hist)
 
     def do_exit(self, args):
         """Exits from the console"""
@@ -464,7 +467,7 @@ class CLI_director(cmd.Cmd):
            Despite the claims in the Cmd documentaion, Cmd.postloop() is not a stub.
         """
         cmd.Cmd.postloop(self)   ## Clean up command completion
-        print "Exiting..."
+        print("Exiting...")
 
     def precmd(self, line):
         """ This method is called after the line has been input but before
@@ -490,8 +493,8 @@ class CLI_director(cmd.Cmd):
         """
         try:
             exec(line) in self._locals, self._globals
-        except Exception, e:
-            print e.__class__, ":", e
+        except Exception as e:
+            print(e.__class__, ":", e)
 
 class Malware_Node:
     '''Class of Malware node.
@@ -836,12 +839,12 @@ def cli_mode():
     cli_director.cmdloop()
 
 if __name__ == '__main__':
-    util.log_to_file('paramiko.log')
+    #util.log_to_file('paramiko.log')
 
     # config logger
-    delete_logs() # for testing period ONLY
-    config_logger()
-    print('Configuring loggers - DONE!')
+    #delete_logs() # for testing period ONLY
+    #config_logger()
+    #print('Configuring loggers - DONE!')
 
     # take nodelist from file
     read_nodelist_from_file(NODELIST_FILEPATH)
